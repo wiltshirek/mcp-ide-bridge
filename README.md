@@ -1,7 +1,7 @@
 # MCP Streamable HTTP – Python Example
 
-This repository provides an example implementation of an MCP (Model Context Protocol) **Streamable HTTP client and server** in Python, based on the draft specification:  
-📄 [MCP Streamable HTTP Spec](https://modelcontextprotocol.io/specification/draft/basic/transports#streamable-http)
+This repository provides an example implementation of an MCP (Model Context Protocol) **Streamable HTTP client and server** in Python, based on the specification:  
+📄 [MCP Streamable HTTP Spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http)
 
 
 ## 🚀 Getting Started

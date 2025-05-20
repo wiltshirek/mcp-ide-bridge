@@ -13,7 +13,15 @@ git clone https://github.com/invariantlabs-ai/mcp-streamable-http.git
 cd python-example
 ```
 
-### 2. Set Up the Server
+### 2. Add Your Anthropic API Key
+
+Update the `.env` file inside the `client` directory with the following content:
+
+```env
+ANTHROPIC_API_KEY=your_api_key_here
+```
+
+### 3. Set Up the Server
 
 ```bash
 cd server
@@ -28,19 +36,11 @@ If you'd like to specify a different port, use the `--port` flag:
 python weather.py --port 9000
 ```
 
-### 3. Set Up the Client
+### 4. Set Up the Client
 
 ```bash
 cd ../client 
 pip install .
-```
-
-### 4. Add Your Anthropic API Key
-
-Update the `.env` file inside the `client` directory with the following content:
-
-```env
-ANTHROPIC_API_KEY=your_api_key_here
 ```
 
 ### 5. Run the Client

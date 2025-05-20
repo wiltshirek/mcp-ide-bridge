@@ -36,7 +36,7 @@ By default, the server will start at `http://localhost:8123`.
 If you'd like to specify a different port, use the `--port` flag:
 
 ```bash
-python weather.py --port 9000
+python weather.py --port=9000
 ```
 
 #### 3. Set Up the Client
@@ -56,7 +56,7 @@ This will start an **interactive chat loop** using the MCP Streamable HTTP proto
 If you started the MCP server on a different port, specify it using the `--mcp-localhost-port` flag:
 
 ```bash
-python client.py --mcp-localhost-port 9000
+python client.py --mcp-localhost-port=9000
 ```
 
 ### 3. Typescript Example
@@ -81,7 +81,7 @@ By default, the server will start at `http://localhost:8123`.
 If you'd like to specify a different port, use the `--port` flag:
 
 ```bash
-node build/index.js --port 9000
+node build/index.js --port=9000
 ```
 
 #### 3. Set Up the Client
@@ -101,7 +101,7 @@ This will start an **interactive chat loop** using the MCP Streamable HTTP proto
 If you started the MCP server on a different port, specify it using the `--mcp-localhost-port` flag:
 
 ```bash
-node build/index.js --mcp-localhost-port 9000
+node build/index.js --mcp-localhost-port=9000
 ```
 
 ---

@@ -66,4 +66,4 @@ In the client chat interface, you can ask questions like:
 - “What’s the weather like in New York City?”
 - “Tell me the forecast for Boston tomorrow.”
 
-The client will stream requests to the local MCP weather server and return the results using Anthropic’s language model.
+The client will forward requests to the local MCP weather server and return the results using Anthropic’s Claude language model. The transport layer used will Streamable HTTP.

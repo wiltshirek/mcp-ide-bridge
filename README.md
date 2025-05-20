@@ -1,9 +1,8 @@
 # MCP Streamable HTTP – Python and Typescript Examples
 
-This repository provides example implementations of MCP (Model Context Protocol) **Streamable HTTP client and server** in Python and Typescript, based on the specification:  
-📄 [MCP Streamable HTTP Spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http).
+This repository provides example implementations of MCP (Model Context Protocol) **Streamable HTTP client and server** in Python and Typescript, based on the specification:  📄 [MCP Streamable HTTP Spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports#streamable-http).
 
-You can set up a client and server using either Python or TypeScript. This example also demonstrates cross-language compatibility, allowing a Python client to communicate with a TypeScript server, and vice-versa.
+You can set up a client + server stack entirely using either Python or TypeScript. This example also demonstrates cross-language compatibility, allowing a Python client to communicate with a TypeScript server, and vice-versa.
 
 ## 🚀 Getting Started
 

@@ -1,6 +1,13 @@
-# MCP Messaging Server
+# MCP IDE Bridge
 
-A stateless MCP (Model Context Protocol) HTTP Streamable server for client-to-client messaging. This server enables secure, real-time communication between different IDE instances, development tools, or applications using the MCP protocol.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+[![MCP Protocol](https://img.shields.io/badge/MCP-HTTP%20Streamable-green.svg)](https://spec.modelcontextprotocol.io/)
+
+A stateless, open source MCP (Model Context Protocol) HTTP Streamable server for client-to-client messaging. This server enables secure, real-time communication between different IDE instances, development tools, or applications using the MCP protocol.
+
+**🎯 Perfect for**: Cross-IDE collaboration, development tool integration, AI agent communication, and distributed development workflows.
 
 ## 🚀 Features
 
@@ -152,12 +159,18 @@ python -m mcp_messaging.server --host 0.0.0.0 --port 9000
 ```
 src/mcp_messaging/
 ├── __init__.py
-└── server.py          # Main server implementation
+├── server.py          # Main server implementation
+├── models.py          # Data models and utilities
+└── queue_backends.py  # Queue backend implementations
 
 examples/
-└── reference/          # Original weather.py example
+├── mcp_recipients.example.json  # Configuration template
+└── reference/                   # Reference implementations
 
-tests/                  # Future test suite
+Docker/
+├── Dockerfile         # Production container
+├── docker-compose.yml # Orchestration
+└── docker-deploy.sh   # Deployment script
 ```
 
 ### Key Design Principles
@@ -168,6 +181,31 @@ tests/                  # Future test suite
 4. **Reliable**: Automatic cleanup and error handling
 5. **Standard**: Pure MCP HTTP Streamable protocol
 
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Setting up the development environment
+- Code style and testing guidelines
+- Submitting pull requests
+- Reporting issues
+
+### Quick Start for Contributors
+
+```bash
+# Fork and clone the repository
+git clone https://github.com/your-username/mcp-ide-bridge.git
+cd mcp-ide-bridge
+
+# Set up development environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e .
+
+# Run the server
+python -m mcp_messaging.server
+```
+
 ## 🛣️ Roadmap
 
 ### Phase 1: ✅ Core Implementation
@@ -175,37 +213,46 @@ tests/                  # Future test suite
 - [x] Basic MCP tools
 - [x] Message expiration
 - [x] Markdown formatting
+- [x] Docker containerization
 
-### Phase 2: 🚧 Optimization
+### Phase 2: 🚧 Enhancement
+- [ ] Redis queue backend
 - [ ] Performance tuning
 - [ ] Queue size limits
-- [ ] Concurrent access protection
-- [ ] Memory optimization
+- [ ] Comprehensive test suite
 
-### Phase 3: 🔮 Security Enhancement
-- [ ] Public/private key authentication
+### Phase 3: 🔮 Advanced Features
+- [ ] Token-based authentication
 - [ ] Message encryption
-- [ ] Key rotation
+- [ ] Rate limiting
 - [ ] Audit logging
 
-## 🔒 Security Considerations
+## 🔒 Security
 
-- **Client IDs**: Treat as secure tokens, don't expose in logs
-- **Network**: Bind to localhost for local development
-- **Messages**: Currently unencrypted (future enhancement)
-- **Access**: No authentication beyond client ID knowledge
+Security is a top priority. Please see our [Security Policy](SECURITY.md) for:
+
+- Reporting vulnerabilities responsibly
+- Security best practices
+- Supported versions
+- Contact information
+
+**Note**: This is early-stage software. Please review security considerations before production use.
 
 ## 📄 License
 
-[Your License Here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+## 🙏 Acknowledgments
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+- Built with [FastMCP](https://github.com/jlowin/fastmcp) framework
+- Follows [MCP Protocol](https://spec.modelcontextprotocol.io/) specifications
+- Inspired by the need for seamless IDE-to-IDE communication
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/wiltshirek/mcp-ide-bridge/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/wiltshirek/mcp-ide-bridge/discussions)
+- **Security**: See [SECURITY.md](SECURITY.md) for security-related concerns
 
 ---
 

@@ -1,8 +1,30 @@
 [project]
-name = "mcp-messaging-server"
-version = "0.1.0"
-description = "MCP HTTP Streamable messaging server for client-to-client communication"
+name = "mcp-ide-bridge"
+version = "1.0.0"
+description = "Open source MCP HTTP Streamable messaging server for client-to-client communication"
+authors = [
+    {name = "Ken Wiltshire", email = "ken@example.com"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+homepage = "https://github.com/wiltshirek/mcp-ide-bridge"
+repository = "https://github.com/wiltshirek/mcp-ide-bridge"
+documentation = "https://github.com/wiltshirek/mcp-ide-bridge#readme"
 requires-python = ">=3.11"
+keywords = ["mcp", "messaging", "ide", "collaboration", "protocol", "streamable"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
+    "Topic :: Text Editors :: Integrated Development Environments (IDE)",
+]
 dependencies = [
     "mcp>=1.9.0",
     "httpx>=0.28.0",
@@ -25,7 +47,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project.scripts]
-mcp-messaging-server = "mcp_messaging.server:main"
+mcp-ide-bridge = "mcp_messaging.server:main"
 
 [tool.black]
 line-length = 88

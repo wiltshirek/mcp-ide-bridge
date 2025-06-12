@@ -1,0 +1,32 @@
+{
+  "my_id": "cursor_client_1",
+  "recipients": {
+    "cursor_client_2": {
+      "name": "Second Cursor Instance",
+      "description": "Another Cursor IDE instance for testing"
+    },
+    "vscode_client_1": {
+      "name": "VS Code Instance",
+      "description": "VS Code IDE for cross-editor communication"
+    },
+    "jetbrains_client_1": {
+      "name": "JetBrains IDE",
+      "description": "IntelliJ/PyCharm/WebStorm instance"
+    }
+  },
+  "server_info": {
+    "url": "http://localhost:8123",
+    "transport": "http_streamable",
+    "health_endpoint": "/api/mcp/health",
+    "sse_endpoint": "/api/mcp/sse"
+  },
+  "message_config": {
+    "max_tokens": 4096,
+    "max_iterations": 10,
+    "timeouts": {
+      "send_message_and_wait": 180,
+      "get_messages": 60,
+      "message_expiration": 300
+    }
+  }
+} 

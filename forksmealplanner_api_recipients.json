@@ -1,0 +1,14 @@
+{
+  "my_id": "forksmealplanner_api",
+  "recipients": {
+    "forksmealplanner_web": {
+      "name": "Forks Meal Planner Web",
+      "description": "Frontend web application for the meal planning platform"
+    }
+  },
+  "server_info": {
+    "url": "http://localhost:8123/mcp/",
+    "transport": "http_streamable",
+    "description": "MCP HTTP Streamable messaging server for cross-project collaboration"
+  }
+} 

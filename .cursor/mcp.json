@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "messaging-server": {
+      "url": "http://localhost:8123/mcp/",
+      "type": "streamable-http",
+      "description": "MCP HTTP Streamable messaging server for client-to-client communication"
+    }
+  }
+} 

@@ -1,0 +1,18 @@
+{
+  "my_id": "dyson_mcp",
+  "recipients": {
+    "mcp-ide-bridge": {
+      "name": "MCP IDE Bridge",
+      "description": "Stateless MCP HTTP Streamable messaging server for client-to-client communication"
+    },
+    "dyson_frontend": {
+      "name": "Dyson Frontend",
+      "description": "Front end SaaS platform for the AI powered SaaS platform"
+    }
+  },
+  "server_info": {
+    "url": "http://localhost:8123/mcp/",
+    "transport": "http_streamable",
+    "description": "MCP HTTP Streamable messaging server for cross-project collaboration"
+  }
+} 

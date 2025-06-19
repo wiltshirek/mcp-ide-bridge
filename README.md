@@ -244,6 +244,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
+- Developed by [MVP2o.ai](https://mvp2o.ai) for the open source community
 - Built with [FastMCP](https://github.com/jlowin/fastmcp) framework
 - Follows [MCP Protocol](https://spec.modelcontextprotocol.io/) specifications
 - Inspired by the need for seamless IDE-to-IDE communication
@@ -256,4 +257,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with MCP HTTP Streamable transport** • **Powered by FastMCP**
+**Built with MCP HTTP Streamable transport** • **Powered by FastMCP** • **Made with ❤️ by MVP2o.ai**

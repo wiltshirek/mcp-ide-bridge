@@ -134,3 +134,17 @@ dmypy.json
 
 # Node-generated files
 node_modules/
+
+# Cursor IDE
+.cursor/
+
+# Local development files
+*.local
+local.*
+temp/
+tmp/
+
+# Personal configuration files
+*_personal.json
+*_private.json
+config.local.json

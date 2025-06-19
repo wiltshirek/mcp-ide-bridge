@@ -3,7 +3,7 @@ name = "mcp-ide-bridge"
 version = "1.0.0"
 description = "Open source MCP HTTP Streamable messaging server for client-to-client communication"
 authors = [
-    {name = "Ken Wiltshire", email = "ken@example.com"}
+    {name = "MVP2o.ai", email = "contact@mvp2o.ai"}
 ]
 readme = "README.md"
 license = {text = "MIT"}

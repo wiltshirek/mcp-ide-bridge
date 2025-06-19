@@ -1,13 +1,13 @@
 {
-  "my_id": "dyson_frontend",
+  "my_id": "mcpresearchserver",
   "recipients": {
     "miles_mcp_server": {
       "name": "Miles MCP Server",
       "description": "Core MCP server for business logic and AI coordination"
     },
-    "mcpresearchserver": {
-      "name": "MCP Research Server",
-      "description": "Research and analysis server for enhanced AI capabilities"
+    "dyson_frontend": {
+      "name": "Dyson Frontend",
+      "description": "Front end SaaS platform for the AI powered SaaS platform"
     },
     "mcp-ide-bridge": {
       "name": "MCP IDE Bridge",
@@ -15,8 +15,8 @@
     }
   },
   "server_info": {
-    "url": "http://localhost:8126/mcp/",
+    "url": "http://localhost:8125/mcp/",
     "transport": "http_streamable",
-    "description": "Dyson Frontend SaaS platform for AI-powered development workflows"
+    "description": "MCP Research Server for advanced research and analysis capabilities"
   }
 } 

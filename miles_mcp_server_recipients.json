@@ -1,9 +1,9 @@
 {
-  "my_id": "dyson_frontend",
+  "my_id": "miles_mcp_server",
   "recipients": {
-    "miles_mcp_server": {
-      "name": "Miles MCP Server",
-      "description": "Core MCP server for business logic and AI coordination"
+    "dyson_frontend": {
+      "name": "Dyson Frontend",
+      "description": "Front end SaaS platform for the AI powered SaaS platform"
     },
     "mcpresearchserver": {
       "name": "MCP Research Server",
@@ -15,8 +15,8 @@
     }
   },
   "server_info": {
-    "url": "http://localhost:8126/mcp/",
+    "url": "http://localhost:8124/mcp/",
     "transport": "http_streamable",
-    "description": "Dyson Frontend SaaS platform for AI-powered development workflows"
+    "description": "Miles MCP server for core business logic and AI coordination"
   }
 } 

@@ -19,7 +19,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 
 Instead, please report security vulnerabilities by:
 
-1. **Email**: Send details to [security@example.com] (replace with your actual security contact)
+1. **Email**: Send details to security@mvp2o.ai
 2. **GitHub Security Advisories**: Use GitHub's private vulnerability reporting feature
 3. **Direct Contact**: Contact the maintainer directly through secure channels
 
@@ -133,8 +133,8 @@ We follow responsible disclosure practices:
 ## Contact
 
 For security-related questions or concerns:
-- **Security Email**: [security@example.com] (replace with actual contact)
-- **Maintainer**: Ken Wiltshire
+- **Security Email**: security@mvp2o.ai
+- **Company**: MVP2o.ai
 - **GitHub**: [@wiltshirek](https://github.com/wiltshirek)
 
 ---

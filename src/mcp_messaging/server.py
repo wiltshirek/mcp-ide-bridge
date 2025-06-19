@@ -230,7 +230,8 @@ messaging_server = MessagingServer(
 mcp = FastMCP(
     name="messaging-server",
     description="MCP server for client-to-client messaging using HTTP Streamable transport",
-    stateless_http=True  # Use stateless HTTP for Streamable HTTP transport
+    stateless_http=True,  # Use stateless HTTP for Streamable HTTP transport
+    json_response=False   # Use SSE streaming format for richer client experience
 )
 
 
@@ -342,8 +343,8 @@ def main() -> None:
     logger.info("Tools available: checkin_client, send_message, send_message_and_wait, get_messages, get_my_identity")
     
     # Start the server with HTTP Streamable transport
-    uvicorn.run(
-        mcp.streamable_http_app,
+    mcp.run(
+        transport="streamable-http",
         host=args.host,
         port=args.port,
         log_level=os.getenv("LOG_LEVEL", "info").lower()

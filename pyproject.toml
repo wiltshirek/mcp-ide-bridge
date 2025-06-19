@@ -7,9 +7,6 @@ authors = [
 ]
 readme = "README.md"
 license = {text = "MIT"}
-homepage = "https://github.com/wiltshirek/mcp-ide-bridge"
-repository = "https://github.com/wiltshirek/mcp-ide-bridge"
-documentation = "https://github.com/wiltshirek/mcp-ide-bridge#readme"
 requires-python = ">=3.11"
 keywords = ["mcp", "messaging", "ide", "collaboration", "protocol", "streamable"]
 classifiers = [
@@ -61,4 +58,10 @@ line-length = 88
 python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
-disallow_untyped_defs = true 
+disallow_untyped_defs = true
+
+[project.urls]
+Homepage = "https://github.com/wiltshirek/mcp-ide-bridge"
+Repository = "https://github.com/wiltshirek/mcp-ide-bridge"
+Documentation = "https://github.com/wiltshirek/mcp-ide-bridge#readme"
+"Bug Reports" = "https://github.com/wiltshirek/mcp-ide-bridge/issues" 

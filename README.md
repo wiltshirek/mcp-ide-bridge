@@ -103,12 +103,26 @@ Each client needs a `mcp_recipients.json` file:
 
 ### 4. Start the Server
 
+**Python:**
 ```bash
 # Default: localhost:8123
 python -m mcp_messaging.server
 
 # Custom host/port
 python -m mcp_messaging.server --host 0.0.0.0 --port 9000
+```
+
+**Docker:**
+```bash
+# Build image
+docker build -t mcp-messaging-server .
+
+# Run container
+docker run -d \
+  --name mcp-messaging-server \
+  -p 8123:8123 \
+  -v "$(pwd)/examples:/app/examples:ro" \
+  mcp-messaging-server
 ```
 
 ## 🔧 Configuration
@@ -127,6 +141,48 @@ python -m mcp_messaging.server --host 0.0.0.0 --port 9000
 - **Cleanup**: On-demand during send/get operations
 - **Format**: Markdown with relative timestamps
 - **Queue**: Per-recipient, created automatically
+
+### Transport Behavior
+
+**Important**: MCP Streamable HTTP using FastMCP has specific transport characteristics:
+
+- **Protocol Layer**: Uses `text/event-stream` headers for MCP protocol communication
+- **Expected Behavior**: Clients should expect SSE format at the transport level
+- **Implementation Note**: This is normal FastMCP behavior for Streamable HTTP transport
+
+### Recommended Configuration
+
+**For MCP clients that support Streamable HTTP (like Cursor, Claude Desktop):**
+
+```python
+mcp = FastMCP(
+    name="your-server-name",
+    stateless_http=True,     # Required for Streamable HTTP
+    json_response=False      # RECOMMENDED: Enables rich streaming experience
+)
+
+mcp.run(transport="streamable-http", host=host, port=port)
+```
+
+**Why `json_response=False` is recommended:**
+- ✅ **Rich streaming**: Progress updates and notifications during tool execution
+- ✅ **Better UX**: Real-time feedback for long-running operations  
+- ✅ **Standard MCP**: More aligned with MCP's streaming capabilities
+- ✅ **Client compatibility**: Works with all MCP clients that support Streamable HTTP
+
+**`json_response=True` vs `json_response=False`:**
+- `True`: Single JSON response per tool call (simpler but less interactive)
+- `False`: Streaming notifications + final result (richer experience)
+
+**For Client Developers:**
+Your MCP client should be prepared to handle:
+- `content-type: text/event-stream` for protocol-level communication
+- `event: message` / `data: {...}` SSE format for transport
+- **Notifications**: `{"method": "notifications/message", ...}` for progress updates
+- **Results**: `{"id": 1, "result": {...}}` for final tool responses
+- JSON-RPC 2.0 message structure within the SSE data field
+
+This is **correct behavior** - FastMCP implements MCP Streamable HTTP using SSE as the underlying transport mechanism while maintaining full MCP compatibility.
 
 ## 🧪 Testing
 
@@ -167,10 +223,7 @@ examples/
 ├── mcp_recipients.example.json  # Configuration template
 └── reference/                   # Reference implementations
 
-Docker/
-├── Dockerfile         # Production container
-├── docker-compose.yml # Orchestration
-└── docker-deploy.sh   # Deployment script
+Dockerfile             # Container build configuration
 ```
 
 ### Key Design Principles

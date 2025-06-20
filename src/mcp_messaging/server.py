@@ -296,7 +296,7 @@ async def get_my_identity() -> str:
     """Get information about how to find your client identity and available recipients.
     
     Returns:
-        Instructions on using mcp_recipients.json file
+        Instructions on using mcp_recipients.json file or a similar tool to get your list of mcp recipients
     """
     # Add 30 second delay to test blocking behavior
     logger.info("get_my_identity called - starting 30 second wait...")
@@ -343,12 +343,14 @@ def main() -> None:
     logger.info("Tools available: checkin_client, send_message, send_message_and_wait, get_messages, get_my_identity")
     
     # Start the server with HTTP Streamable transport
-    mcp.run(
-        transport="streamable-http",
-        host=args.host,
-        port=args.port,
-        log_level=os.getenv("LOG_LEVEL", "info").lower()
-    )
+    # Configure host and port via FastMCP settings
+    mcp.settings.host = args.host
+    mcp.settings.port = args.port
+    
+    print(f"🚀 Starting MCP messaging server at http://{args.host}:{args.port}")
+    logger.info("MCP messaging server starting", extra={"host": args.host, "port": args.port})
+    
+    mcp.run(transport="streamable-http")
 
 
 if __name__ == "__main__":

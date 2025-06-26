@@ -9,9 +9,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+import httpx
 import uvicorn
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+from starlette.responses import JSONResponse
 
 from .models import Message, format_relative_time
 from .queue_backends import QueueBackend, InMemoryQueueBackend
@@ -62,6 +64,102 @@ def load_client_config(client_id: str) -> Dict:
         logger.warning(f"Error loading config for {client_id}: {e}")
     
     return DEFAULT_CONFIG
+
+
+def load_callbacks_from_config() -> Dict[str, List[str]]:
+    """Load callback URLs from all *_recipients.json files."""
+    callbacks = {"connect": [], "disconnect": []}
+    
+    try:
+        # Find all *_recipients.json files in current directory
+        current_dir = Path.cwd()
+        for config_file in current_dir.glob("*_recipients.json"):
+            try:
+                with open(config_file) as f:
+                    config = json.load(f)
+                    file_callbacks = config.get("callbacks", {})
+                    
+                    # Add connect callbacks
+                    if "connect" in file_callbacks:
+                        if isinstance(file_callbacks["connect"], list):
+                            callbacks["connect"].extend(file_callbacks["connect"])
+                        else:
+                            callbacks["connect"].append(file_callbacks["connect"])
+                    
+                    # Add disconnect callbacks
+                    if "disconnect" in file_callbacks:
+                        if isinstance(file_callbacks["disconnect"], list):
+                            callbacks["disconnect"].extend(file_callbacks["disconnect"])
+                        else:
+                            callbacks["disconnect"].append(file_callbacks["disconnect"])
+                            
+                    logger.debug(f"Loaded callbacks from {config_file.name}: {file_callbacks}")
+                    
+            except Exception as e:
+                logger.warning(f"Error loading callbacks from {config_file}: {e}")
+    
+    except Exception as e:
+        logger.warning(f"Error scanning for callback configs: {e}")
+    
+    # Remove duplicates while preserving order
+    callbacks["connect"] = list(dict.fromkeys(callbacks["connect"]))
+    callbacks["disconnect"] = list(dict.fromkeys(callbacks["disconnect"]))
+    
+    logger.info(f"Loaded callbacks - Connect: {len(callbacks['connect'])}, Disconnect: {len(callbacks['disconnect'])}")
+    return callbacks
+
+
+async def fire_callbacks(event_type: str, payload: Dict) -> None:
+    """Fire HTTP callbacks for the given event type."""
+    callbacks = load_callbacks_from_config()
+    urls = callbacks.get(event_type, [])
+    
+    if not urls:
+        logger.debug(f"No callbacks configured for event: {event_type}")
+        return
+    
+    logger.info(f"Firing {len(urls)} callback(s) for event: {event_type}")
+    
+    # Fire callbacks concurrently with retries
+    tasks = []
+    for url in urls:
+        task = asyncio.create_task(fire_single_callback(url, payload, event_type))
+        tasks.append(task)
+    
+    # Wait for all callbacks to complete (don't block the main flow)
+    if tasks:
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+
+async def fire_single_callback(url: str, payload: Dict, event_type: str) -> None:
+    """Fire a single HTTP callback with retries."""
+    max_retries = 3
+    timeout_seconds = 5.0
+    retry_delays = [1.0, 2.0, 4.0]  # Exponential backoff
+    
+    for attempt in range(max_retries):
+        try:
+            async with httpx.AsyncClient(timeout=timeout_seconds) as client:
+                response = await client.post(url, json=payload)
+                response.raise_for_status()
+                
+                logger.info(f"✅ Callback success: {event_type} -> {url} (attempt {attempt + 1})")
+                return  # Success, exit retry loop
+                
+        except httpx.TimeoutException:
+            logger.warning(f"⏰ Callback timeout: {event_type} -> {url} (attempt {attempt + 1}/{max_retries})")
+        except httpx.HTTPStatusError as e:
+            logger.warning(f"🔴 Callback HTTP error: {event_type} -> {url} - Status {e.response.status_code} (attempt {attempt + 1}/{max_retries})")
+        except Exception as e:
+            logger.warning(f"❌ Callback error: {event_type} -> {url} - {str(e)} (attempt {attempt + 1}/{max_retries})")
+        
+        # Wait before retry (except on last attempt)
+        if attempt < max_retries - 1:
+            await asyncio.sleep(retry_delays[attempt])
+    
+    # All retries failed
+    logger.error(f"💥 Callback failed after {max_retries} attempts: {event_type} -> {url}")
+
 
 def format_message_log(action: str, sender_id: str, recipient_id: str, message: str) -> str:
     """Format a message log entry with complete details."""
@@ -275,6 +373,12 @@ async def send_message_and_wait(sender_id: str, recipient_id: str, message: str,
     
     formatted_message = f"{message}\n\n---\n{expectation_text.get(expectation, expectation_text['response_expected'])}"
     
+    # Fire and forget for no_response - don't block
+    if expectation == "no_response":
+        result = await messaging_server.send_message(sender_id, recipient_id, formatted_message)
+        return f"📭 **Message sent** (no response expected)\n\n{result}"
+    
+    # Block and wait for response (original behavior)
     return await messaging_server.send_message_and_wait(sender_id, recipient_id, formatted_message)
 
 
@@ -314,6 +418,149 @@ async def get_my_identity() -> str:
 This file should be in the root directory of your project and contains all the client IDs and recipient information needed for messaging."""
 
 
+@mcp.tool()
+async def get_active_sessions() -> str:
+    """Get information about active MCP sessions and connections.
+    
+    Returns:
+        Information about current active sessions, queue statistics, and server status
+    """
+    try:
+        # Get session information from FastMCP (if available)
+        session_info = []
+        
+        # Get queue statistics
+        if hasattr(messaging_server.queue_backend, 'get_queue_stats'):
+            queue_stats = messaging_server.queue_backend.get_queue_stats()
+        else:
+            queue_stats = {
+                "total_queues": len(getattr(messaging_server.queue_backend, 'queues', {})),
+                "total_messages": sum(len(msgs) for msgs in getattr(messaging_server.queue_backend, 'queues', {}).values()),
+                "active_waiters": len(getattr(messaging_server.queue_backend, 'notification_events', {}))
+            }
+        
+        # Get active client IDs from queues
+        active_clients = list(getattr(messaging_server.queue_backend, 'queues', {}).keys())
+        waiting_clients = list(getattr(messaging_server.queue_backend, 'notification_events', {}).keys())
+        
+        # Format response
+        response_parts = [
+            "## 🌐 MCP Server Session Status",
+            "",
+            f"**Server Name:** {mcp.name}",
+            f"**Transport:** HTTP Streamable (stateless)",
+            "",
+            "### 📊 Queue Statistics",
+            f"- **Active Queues:** {queue_stats['total_queues']}",
+            f"- **Total Messages:** {queue_stats['total_messages']}",
+            f"- **Waiting Clients:** {queue_stats.get('active_waiters', 0)}",
+            "",
+        ]
+        
+        if active_clients:
+            response_parts.extend([
+                "### 📝 Active Client Queues",
+                ""
+            ])
+            for client_id in active_clients:
+                queue_size = len(messaging_server.queue_backend.queues.get(client_id, []))
+                response_parts.append(f"- **{client_id}**: {queue_size} message(s)")
+            response_parts.append("")
+        
+        if waiting_clients:
+            response_parts.extend([
+                "### ⏳ Clients Waiting for Messages",
+                ""
+            ])
+            for client_id in waiting_clients:
+                response_parts.append(f"- **{client_id}**: Blocking for new messages")
+            response_parts.append("")
+        
+        if not active_clients and not waiting_clients:
+            response_parts.extend([
+                "### 💤 No Active Sessions",
+                "",
+                "No clients currently have active message queues or are waiting for messages.",
+                ""
+            ])
+        
+        response_parts.extend([
+            "### ℹ️ Session Notes",
+            "",
+            "- **HTTP Streamable**: Sessions are managed by FastMCP automatically",
+            "- **Stateless Design**: Session IDs are handled transparently", 
+            "- **Queue Cleanup**: Expired messages are cleaned up automatically",
+            "- **Message Expiration**: 5 minutes (300 seconds)"
+        ])
+        
+        return "\n".join(response_parts)
+        
+    except Exception as e:
+        logger.error(f"Error getting session info: {e}")
+        return f"❌ **Error**: Could not retrieve session information: {str(e)}"
+
+
+@mcp.custom_route("/api/sessions", methods=["GET"])
+async def get_sessions_json(request):
+    """REST endpoint for session statistics - returns pure JSON for normal REST clients."""
+    try:
+        # Get queue statistics (same logic as MCP tool but return JSON)
+        if hasattr(messaging_server.queue_backend, 'get_queue_stats'):
+            queue_stats = messaging_server.queue_backend.get_queue_stats()
+        else:
+            queue_stats = {
+                "total_queues": len(getattr(messaging_server.queue_backend, 'queues', {})),
+                "total_messages": sum(len(msgs) for msgs in getattr(messaging_server.queue_backend, 'queues', {}).values()),
+                "active_waiters": len(getattr(messaging_server.queue_backend, 'notification_events', {}))
+            }
+        
+        # Get active client IDs from queues
+        active_clients = list(getattr(messaging_server.queue_backend, 'queues', {}).keys())
+        waiting_clients = list(getattr(messaging_server.queue_backend, 'notification_events', {}).keys())
+        
+        # Build client details
+        client_details = {}
+        for client_id in active_clients:
+            queue_size = len(messaging_server.queue_backend.queues.get(client_id, []))
+            client_details[client_id] = {
+                "queue_size": queue_size,
+                "status": "has_messages"
+            }
+        
+        for client_id in waiting_clients:
+            if client_id not in client_details:
+                client_details[client_id] = {
+                    "queue_size": 0,
+                    "status": "waiting_for_messages"
+                }
+        
+        # Return clean JSON structure using JSONResponse
+        data = {
+            "server_name": mcp.name,
+            "transport": "HTTP Streamable (stateless)",
+            "timestamp": datetime.now().isoformat(),
+            "stats": {
+                "active_queues": queue_stats['total_queues'],
+                "total_messages": queue_stats['total_messages'],
+                "waiting_clients": queue_stats.get('active_waiters', 0)
+            },
+            "clients": client_details,
+            "session_notes": {
+                "session_management": "FastMCP automatic",
+                "design": "stateless",
+                "cleanup": "automatic",
+                "message_expiration_seconds": 300
+            }
+        }
+        
+        return JSONResponse(content=data)
+        
+    except Exception as e:
+        logger.error(f"Error getting session JSON: {e}")
+        error_data = {"error": f"Could not retrieve session information: {str(e)}"}
+        return JSONResponse(content=error_data, status_code=500)
+
+
 def main() -> None:
     """Main entry point for the messaging server."""
     parser = argparse.ArgumentParser(description="MCP HTTP Streamable messaging server")
@@ -340,7 +587,7 @@ def main() -> None:
     
     logger.info(f"Starting MCP messaging server on {args.host}:{args.port}")
     logger.info(f"Queue backend: {type(messaging_server.queue_backend).__name__}")
-    logger.info("Tools available: checkin_client, send_message, send_message_and_wait, get_messages, get_my_identity")
+    logger.info("Tools available: checkin_client, send_message, send_message_and_wait, get_messages, get_my_identity, get_active_sessions")
     
     # Start the server with HTTP Streamable transport
     # Configure host and port via FastMCP settings

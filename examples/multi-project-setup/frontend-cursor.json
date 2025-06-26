@@ -1,13 +1,13 @@
 {
-  "my_id": "myproject_cursor",
+  "my_id": "mybackendapi_cursor",
   "recipients": {
     "myfrontendweb_vscode": {
       "name": "Frontend Web App",
       "description": "React frontend project in VS Code"
     },
-    "mybackendapi_cursor": {
-      "name": "Backend API",
-      "description": "Node.js/Express backend in Cursor"
+    "projectspecs_claudedesktop": {
+      "name": "Project Specifications", 
+      "description": "Project docs and specs in Claude Desktop"
     },
     "myragproject_windsurf": {
       "name": "RAG Project",
@@ -17,22 +17,13 @@
       "name": "DevOps Project",
       "description": "Infrastructure project in JetBrains"
     },
-    "projectspecs_claudedesktop": {
-      "name": "Project Specifications",
-      "description": "Project docs and specs in Claude Desktop"
+    "myaiagent_cursor": {
+      "name": "AI Agent Project",
+      "description": "AI agent development in another Cursor instance"
     }
   },
   "server_info": {
     "url": "http://localhost:8111/mcp/",
     "transport": "http_streamable"
-  },
-  "message_config": {
-    "max_tokens": 4096,
-    "max_iterations": 10,
-    "timeouts": {
-      "send_message_and_wait": 180.0,
-      "get_messages": 60.0,
-      "message_expiration": 300.0
-    }
   }
 } 

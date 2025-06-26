@@ -1,0 +1,29 @@
+{
+  "my_id": "mydevops_jetbrains",
+  "recipients": {
+    "mybackendapi_cursor": {
+      "name": "Backend API",
+      "description": "Node.js/Express backend in Cursor"
+    },
+    "myfrontendweb_vscode": {
+      "name": "Frontend Web App",
+      "description": "React frontend project in VS Code"
+    },
+    "projectspecs_claudedesktop": {
+      "name": "Project Specifications",
+      "description": "Project docs and specs in Claude Desktop"
+    },
+    "myragproject_windsurf": {
+      "name": "RAG Project",
+      "description": "RAG implementation project in Windsurf"
+    },
+    "myaiagent_cursor": {
+      "name": "AI Agent Project",
+      "description": "AI agent development in Cursor"
+    }
+  },
+  "server_info": {
+    "url": "http://localhost:8111/mcp/",
+    "transport": "http_streamable"
+  }
+} 

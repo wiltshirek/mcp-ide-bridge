@@ -148,3 +148,8 @@ tmp/
 *_personal.json
 *_private.json
 config.local.json
+
+# Project planning and internal documentation
+markdownplans/
+PROJECT_PLAN.md
+TECHNICAL_CONVERSATION_LOG.md

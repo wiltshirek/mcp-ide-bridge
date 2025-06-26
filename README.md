@@ -5,308 +5,314 @@
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
 [![MCP Protocol](https://img.shields.io/badge/MCP-HTTP%20Streamable-green.svg)](https://spec.modelcontextprotocol.io/)
 
-A stateless, open source MCP (Model Context Protocol) HTTP Streamable server for client-to-client messaging. This server enables secure, real-time communication between different IDE instances, development tools, or applications using the MCP protocol.
+## 🎬 Demo Video
 
-**🎯 Perfect for**: Cross-IDE collaboration, development tool integration, AI agent communication, and distributed development workflows.
+[![MCP IDE Bridge Demo](https://img.youtube.com/vi/TA97TGoOMJA/maxresdefault.jpg)](https://www.youtube.com/watch?v=TA97TGoOMJA)
 
-## 🚀 Features
+*Click the image above to watch the live demo of MCP IDE Bridge in action!*
 
-- **Stateless Architecture**: No persistent client state, maximum reliability
-- **HTTP Streamable Transport**: Uses latest MCP specification (2025-03-26)
-- **Security-First Design**: Client IDs act as security credentials
-- **Dynamic Discovery**: Clients self-register, no pre-configuration required
-- **Message Expiration**: Automatic 5-minute message cleanup
-- **Real-time Messaging**: Immediate message delivery and retrieval
+A stateless, open source MCP (Model Context Protocol) HTTP Streamable server that enables **client-to-client communication** between IDEs and development tools. This opens up a new dimension of collaboration beyond traditional MCP client-server interactions.
+
+**🚀 Perfect for**: Cross-IDE collaboration, team development workflows, AI agent coordination, and seamless tool integration.
+
+## 🌟 What Makes This Special?
+
+### Traditional MCP vs MCP IDE Bridge
+
+| Traditional MCP | MCP IDE Bridge |
+|----------------|----------------|
+| Client ↔ Server | Client ↔ Server ↔ Client |
+| One-way communication | Bidirectional messaging |
+| Tool execution only | Real-time collaboration |
+| Single IDE focus | Multi-IDE coordination |
+
+### Real-World Use Cases
+
+**🎯 IDE Collaboration**
+- **Cursor ↔ Cursor**: Share code snippets, debugging sessions, or pair programming
+- **Cursor ↔ VS Code**: Cross-editor communication and file sharing
+- **Windsurf ↔ Any IDE**: AI agent coordination across different development environments
+- **Team Workflows**: Coordinate multiple developers working on the same project
+
+**🤖 AI Agent Coordination**
+- Agent-to-agent communication for complex workflows
+- Distributed AI processing across multiple tools
+- Human-in-the-loop collaboration with AI assistants
 
 ## 🏗️ Architecture
 
-### Core Concepts
-
-- **Client IDs**: Secure identifiers for clients (from `mcp_recipients.json`)
-- **Message Queues**: Per-recipient queues created on-demand
-- **Stateless Operations**: Each request is independent
-- **Markdown Responses**: Human-readable formatted responses
-
-### Message Flow
+### Client-to-Client Communication
 
 ```
-Client A → send_message → Server Queue → get_messages → Client B
+IDE A (Cursor)  ←→  MCP IDE Bridge  ←→  IDE B (VS Code)
+     ↑                    ↑                    ↑
+  MCP Client         Message Relay        MCP Client
 ```
 
-## 📋 Available Tools
+### Key Components
 
-### `checkin_client`
-Announce client presence to the server.
-- **Parameters**: `client_id`, `name`, `capabilities`
-- **Returns**: Confirmation message
+- **Message Relay**: Stateless server that routes messages between clients
+- **Client Registry**: Dynamic client discovery and registration
+- **Message Queues**: Per-recipient queues with automatic expiration
+- **HTTP Streamable**: Latest MCP transport for real-time communication
 
-### `send_message`
-Send a message to another client.
-- **Parameters**: `sender_id`, `recipient_id`, `message`
-- **Returns**: Success confirmation
+## 🚀 Quick Start
 
-### `get_messages`
-Retrieve and remove pending messages.
-- **Parameters**: `client_id`
-- **Returns**: Messages in markdown format (popped from queue)
+### 1. Start the Server
 
-### `get_my_identity`
-Get instructions on client configuration.
-- **Parameters**: None
-- **Returns**: Information about `mcp_recipients.json`
-
-## ⚙️ Setup
-
-### 1. Install Dependencies
-
+**Docker (Recommended):**
 ```bash
-# Create Python 3.11+ virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install the package
-pip install -e .
+docker run -d --name mcp-ide-bridge -p 8111:8123 mcp-messaging-server
 ```
 
-### 2. Configure Environment
-
-Copy `env.example` to `.env` and adjust settings:
-
+**Python:**
 ```bash
-cp env.example .env
+python -m mcp_messaging.server --port 8111
 ```
 
-### 3. Create Client Configuration
+### 2. Configure Your IDE
 
-Each client needs a `mcp_recipients.json` file:
+Create `mcp_recipients.json` in your project root. **Each project gets ONE file with its own unique ID and list of recipients it can communicate with:**
 
 ```json
 {
-  "my_id": "cursor_client_1",
+  "my_id": "myproject_cursor",
   "recipients": {
-    "cursor_client_2": {
-      "name": "Second Cursor Instance",
-      "description": "Another Cursor IDE instance for testing"
+    "teammate_vscode": {
+      "name": "Teammate's Project",
+      "description": "My teammate's project in VS Code"
     },
-    "vscode_client_1": {
-      "name": "VS Code Instance", 
-      "description": "VS Code IDE for cross-editor communication"
+    "aiagent_windsurf": {
+      "name": "AI Agent Project", 
+      "description": "AI agent development in Windsurf"
     }
   },
   "server_info": {
-    "url": "http://localhost:8123",
-    "health_endpoint": "/api/mcp/health",
-    "sse_endpoint": "/api/mcp/sse"
+    "url": "http://localhost:8111/mcp/",
+    "transport": "http_streamable"
   }
 }
 ```
 
-### 4. Start the Server
+**🤖 AI Agent Generation**: Your IDE's AI agent can generate this file! Simply ask:
+- **Cursor**: "Generate an mcp_recipients.json for my project"
+- **VS Code**: "Create mcp_recipients.json configuration for my team"
+- **Windsurf**: "Help me set up mcp_recipients.json for collaboration"
 
-**Python:**
+**📁 Multi-Project Examples**: See `examples/multi-project-setup/` for examples showing how different projects communicate. **Each project file must be named `mcp_recipients.json`** - the filename examples in that folder are just for reference.
+
+### 3. Connect Your IDE
+
+**Cursor IDE:**
+1. Create `.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "messaging-server": {
+      "url": "http://localhost:8111/mcp/",
+      "type": "streamable-http",
+      "description": "MCP HTTP Streamable messaging server for client-to-client communication"
+    }
+  }
+}
+```
+2. Open Command Palette (`Cmd/Ctrl + Shift + P`)
+3. Search for "MCP: Connect to Server"
+4. Enter: `http://localhost:8111/mcp/`
+
+**VS Code:**
+1. Install MCP extension from marketplace
+2. Create `mcp_recipients.json` in project root
+3. Configure MCP settings in VS Code preferences
+4. Use MCP commands to connect and collaborate
+
+**Windsurf:**
+1. Create `mcp_recipients.json` in project root
+2. Open Windsurf settings → MCP configuration
+3. Add server URL: `http://localhost:8111/mcp/`
+4. Start messaging with other IDEs
+
+**Claude Desktop:**
+1. Create `mcp_recipients.json` in project root
+2. Open Claude Desktop settings → MCP configuration
+3. Add server URL: `http://localhost:8111/mcp/`
+4. Use Claude's MCP integration to communicate
+
+**JetBrains IDEs (IntelliJ, PyCharm, etc.):**
+1. Install MCP plugin from plugin marketplace
+2. Create `mcp_recipients.json` in project root
+3. Configure MCP server in plugin settings
+4. Use MCP tools from the IDE
+
+**Note**: Each IDE requires both `mcp_recipients.json` (for messaging) and IDE-specific MCP configuration (for connection). **Each project gets ONE `mcp_recipients.json` file with its own unique ID and recipient list.** The file must be named exactly `mcp_recipients.json` and placed in the **project root** for easy discovery by IDE agents. See `examples/multi-project-setup/README.md` for detailed setup instructions.
+
+## 📋 Available Tools
+
+### Core Messaging Tools
+
+| Tool | Description | Use Case |
+|------|-------------|----------|
+| `checkin_client` | Register your presence | Announce availability |
+| `send_message_and_wait` | Send message & wait for response | Real-time conversations |
+| `get_messages` | Retrieve pending messages | Check for updates |
+| `get_my_identity` | Get configuration help | Setup assistance |
+| `get_active_sessions` | View active connections | Monitor team activity |
+
+### Example Workflows
+
+**Pair Programming:**
 ```bash
-# Default: localhost:8123
-python -m mcp_messaging.server
+# Developer A checks in
+checkin_client("alice_cursor", "Alice", "Working on auth module")
 
-# Custom host/port
-python -m mcp_messaging.server --host 0.0.0.0 --port 9000
+# Developer B sends a question
+send_message_and_wait("bob_vscode", "alice_cursor", "Can you review this auth code?")
+
+# Developer A gets the message
+get_messages("alice_cursor")
 ```
 
-**Docker:**
+**AI Agent Coordination:**
 ```bash
-# Build image
-docker build -t mcp-messaging-server .
+# AI Agent 1 announces task completion
+checkin_client("ai_agent_1", "Code Review Bot", "Ready for review tasks")
 
-# Run container
-docker run -d \
-  --name mcp-messaging-server \
-  -p 8123:8123 \
-  -v "$(pwd)/examples:/app/examples:ro" \
-  mcp-messaging-server
+# AI Agent 2 requests collaboration
+send_message_and_wait("ai_agent_2", "ai_agent_1", "Need help with security review")
 ```
 
-## 🔧 Configuration
+## 🔒 Security Considerations
 
-### Environment Variables
+### Current State (Desktop Use)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MCP_SERVER_HOST` | `localhost` | Server bind address |
-| `MCP_SERVER_PORT` | `8123` | Server port |
-| `LOG_LEVEL` | `INFO` | Logging level |
+**✅ Suitable for:**
+- Local development teams
+- Personal projects
+- Desktop-only workflows
+- Trusted network environments
 
-### Message Settings
+**⚠️ Limitations:**
+- No authentication beyond client IDs
+- No encryption of messages
+- No access control
+- No audit logging
 
-- **Expiration**: 5 minutes (hardcoded)
-- **Cleanup**: On-demand during send/get operations
-- **Format**: Markdown with relative timestamps
-- **Queue**: Per-recipient, created automatically
+**🔐 Security Model:**
+- Client IDs act as simple credentials
+- Messages stored in memory only
+- 5-minute automatic expiration
+- No persistent storage
 
-### Transport Behavior
+### Enterprise Solution
 
-**Important**: MCP Streamable HTTP using FastMCP has specific transport characteristics:
+For production use, security, and team collaboration, we offer **MilesDyson.ai** - an enterprise-grade Agentic Platform as a Service (aPaaS) that addresses all security concerns:
 
-- **Protocol Layer**: Uses `text/event-stream` headers for MCP protocol communication
-- **Expected Behavior**: Clients should expect SSE format at the transport level
-- **Implementation Note**: This is normal FastMCP behavior for Streamable HTTP transport
+- **🔐 Enterprise Authentication**: SSO, RBAC, and audit trails
+- **🛡️ End-to-End Encryption**: All messages encrypted in transit and at rest
+- **🌐 Global Infrastructure**: Multi-region deployment with 99.9% uptime
+- **👥 Team Management**: User management, permissions, and collaboration tools
+- **📊 Analytics**: Usage insights and performance monitoring
+- **🔧 Enterprise Support**: Dedicated support and custom integrations
 
-### Recommended Configuration
-
-**For MCP clients that support Streamable HTTP (like Cursor, Claude Desktop):**
-
-```python
-mcp = FastMCP(
-    name="your-server-name",
-    stateless_http=True,     # Required for Streamable HTTP
-    json_response=False      # RECOMMENDED: Enables rich streaming experience
-)
-
-mcp.run(transport="streamable-http", host=host, port=port)
-```
-
-**Why `json_response=False` is recommended:**
-- ✅ **Rich streaming**: Progress updates and notifications during tool execution
-- ✅ **Better UX**: Real-time feedback for long-running operations  
-- ✅ **Standard MCP**: More aligned with MCP's streaming capabilities
-- ✅ **Client compatibility**: Works with all MCP clients that support Streamable HTTP
-
-**`json_response=True` vs `json_response=False`:**
-- `True`: Single JSON response per tool call (simpler but less interactive)
-- `False`: Streaming notifications + final result (richer experience)
-
-**For Client Developers:**
-Your MCP client should be prepared to handle:
-- `content-type: text/event-stream` for protocol-level communication
-- `event: message` / `data: {...}` SSE format for transport
-- **Notifications**: `{"method": "notifications/message", ...}` for progress updates
-- **Results**: `{"id": 1, "result": {...}}` for final tool responses
-- JSON-RPC 2.0 message structure within the SSE data field
-
-This is **correct behavior** - FastMCP implements MCP Streamable HTTP using SSE as the underlying transport mechanism while maintaining full MCP compatibility.
+**[Learn More → MilesDyson.ai](https://milesdyson.ai)**
 
 ## 🧪 Testing
 
-### Quick Test Flow
+### Quick Connection Test
 
-1. Start the server:
-   ```bash
-   python -m mcp_messaging.server
-   ```
+```bash
+# Test server connectivity
+curl -X GET http://localhost:8111/api/sessions
 
-2. Connect MCP client and test tools:
-   ```bash
-   # Check in as a client
-   checkin_client("client_1", "Test Client", "Testing capabilities")
-   
-   # Send a message
-   send_message("client_1", "client_2", "Hello from client 1!")
-   
-   # Retrieve messages (as client_2)
-   get_messages("client_2")
-   
-   # Get identity help
-   get_my_identity()
-   ```
+# Test MCP client connection
+cd examples/client
+python test_connection.py --mcp-localhost-port 8111
+```
 
-## 📝 Development
+### Reference Client
+
+The project includes a reference MCP client for testing:
+
+```bash
+cd examples/client
+pip install -e .
+python client.py --mcp-localhost-port 8111
+```
+
+## 🏗️ Development
 
 ### Project Structure
 
 ```
 src/mcp_messaging/
-├── __init__.py
 ├── server.py          # Main server implementation
-├── models.py          # Data models and utilities
-└── queue_backends.py  # Queue backend implementations
+├── models.py          # Data models
+└── queue_backends.py  # Queue implementations
 
 examples/
-├── mcp_recipients.example.json  # Configuration template
-└── reference/                   # Reference implementations
+├── client/            # Reference MCP client
+├── configs/           # Project-specific configurations
+├── multi-project-setup/  # Multi-project IDE communication examples
+│   ├── README.md      # Comprehensive setup guide
+│   ├── frontend-cursor.json
+│   ├── backend-vscode.json
+│   ├── rag-windsurf.json
+│   ├── devops-jetbrains.json
+│   └── ...            # More project examples (filenames for reference only)
+└── reference/         # Additional examples
 
-Dockerfile             # Container build configuration
+mcp_recipients.json    # Example configuration (each project gets ONE file)
+Dockerfile            # Container support
 ```
 
-### Key Design Principles
+**Note**: Each project gets ONE `mcp_recipients.json` file with its own unique ID and recipient list. The example filenames in `multi-project-setup/` are just for reference - your actual file must be named `mcp_recipients.json` in each project root.
 
-1. **Stateless**: No persistent state between requests
-2. **Secure**: Client IDs as credentials
-3. **Simple**: Minimal configuration required
-4. **Reliable**: Automatic cleanup and error handling
-5. **Standard**: Pure MCP HTTP Streamable protocol
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on:
-
-- Setting up the development environment
-- Code style and testing guidelines
-- Submitting pull requests
-- Reporting issues
-
-### Quick Start for Contributors
+### Local Development
 
 ```bash
-# Fork and clone the repository
+# Clone and setup
 git clone https://github.com/your-username/mcp-ide-bridge.git
 cd mcp-ide-bridge
 
-# Set up development environment
+# Install dependencies
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -e .
 
-# Run the server
-python -m mcp_messaging.server
+# Run server
+python -m mcp_messaging.server --port 8111
 ```
 
-## 🛣️ Roadmap
+## 🤝 Contributing
 
-### Phase 1: ✅ Core Implementation
-- [x] Stateless message queues
-- [x] Basic MCP tools
-- [x] Message expiration
-- [x] Markdown formatting
-- [x] Docker containerization
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
-### Phase 2: 🚧 Enhancement
-- [ ] Redis queue backend
-- [ ] Performance tuning
-- [ ] Queue size limits
-- [ ] Comprehensive test suite
-
-### Phase 3: 🔮 Advanced Features
-- [ ] Token-based authentication
-- [ ] Message encryption
-- [ ] Rate limiting
-- [ ] Audit logging
-
-## 🔒 Security
-
-Security is a top priority. Please see our [Security Policy](SECURITY.md) for:
-
-- Reporting vulnerabilities responsibly
-- Security best practices
-- Supported versions
-- Contact information
-
-**Note**: This is early-stage software. Please review security considerations before production use.
+- Development setup
+- Code style guidelines
+- Testing procedures
+- Pull request process
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
-## 🙏 Acknowledgments
+## 🚀 Enterprise Solution
 
-- Developed by [MVP2o.ai](https://mvp2o.ai) for the open source community
-- Built with [FastMCP](https://github.com/jlowin/fastmcp) framework
-- Follows [MCP Protocol](https://spec.modelcontextprotocol.io/) specifications
-- Inspired by the need for seamless IDE-to-IDE communication
+**Ready for production use?** 
 
-## 📞 Support
+**[MilesDyson.ai](https://milesdyson.ai)** provides enterprise-grade MCP IDE Bridge with:
 
-- **Issues**: [GitHub Issues](https://github.com/wiltshirek/mcp-ide-bridge/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/wiltshirek/mcp-ide-bridge/discussions)
-- **Security**: See [SECURITY.md](SECURITY.md) for security-related concerns
+- 🔐 **Enterprise Security**: SSO, encryption, audit trails
+- 🌐 **Global Infrastructure**: Multi-region, high availability  
+- 👥 **Team Management**: User management and collaboration tools
+- 📊 **Analytics & Monitoring**: Usage insights and performance tracking
+- 🔧 **Enterprise Support**: Dedicated support and custom integrations
+
+**Perfect for:**
+- Development teams
+- Enterprise environments
+- Production deployments
+- Multi-organization collaboration
 
 ---
 

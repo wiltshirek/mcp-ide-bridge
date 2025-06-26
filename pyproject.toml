@@ -30,15 +30,6 @@ dependencies = [
     "pydantic>=2.0.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.5.0",
-]
-
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
@@ -46,22 +37,8 @@ build-backend = "setuptools.build_meta"
 [project.scripts]
 mcp-ide-bridge = "mcp_messaging.server:main"
 
-[tool.black]
-line-length = 88
-target-version = ['py311']
-
-[tool.ruff]
-target-version = "py311"
-line-length = 88
-
-[tool.mypy]
-python_version = "3.11"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true 
-
 [project.urls]
-Homepage = "https://github.com/wiltshirek/mcp-ide-bridge"
-Repository = "https://github.com/wiltshirek/mcp-ide-bridge"
-Documentation = "https://github.com/wiltshirek/mcp-ide-bridge#readme"
-"Bug Reports" = "https://github.com/wiltshirek/mcp-ide-bridge/issues" 
+Homepage = "https://github.com/your-username/mcp-ide-bridge"
+Repository = "https://github.com/your-username/mcp-ide-bridge"
+Documentation = "https://github.com/your-username/mcp-ide-bridge#readme"
+"Bug Reports" = "https://github.com/your-username/mcp-ide-bridge/issues" 

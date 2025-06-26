@@ -7,9 +7,28 @@
 
 ## 🎬 Demo Video
 
-[![MCP IDE Bridge Demo](https://img.youtube.com/vi/TA97TGoOMJA/maxresdefault.jpg)](https://www.youtube.com/watch?v=TA97TGoOMJA)
+<div align="center">
 
-*Click the image above to watch the live demo of MCP IDE Bridge in action!*
+<table>
+  <tr>
+    <td align="center" width="50%"><b>FRONT END WEB APP<br/>CURSOR IDE</b></td>
+    <td align="center" width="50%"><b>BACK END API<br/>CURSOR IDE</b></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <a href="https://www.youtube.com/watch?v=TA97TGoOMJA" target="_blank">
+        <img src="https://img.youtube.com/vi/TA97TGoOMJA/maxresdefault.jpg" alt="MCP IDE Bridge Demo" style="border: 3px solid #4CAF50; border-radius: 10px; padding: 4px; box-shadow: 0 0 8px #888;">
+      </a>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<p align="center"><i>
+Click the image above to watch the live demo of MCP IDE Bridge in action!<br>
+<b>This shows two Cursor IDEs (front end and back end) collaborating in real time via the IDE Bridge.</b>
+</i></p>
 
 A stateless, open source MCP (Model Context Protocol) HTTP Streamable server that enables **client-to-client communication** between IDEs and development tools. This opens up a new dimension of collaboration beyond traditional MCP client-server interactions.
 

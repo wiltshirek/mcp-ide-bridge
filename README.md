@@ -17,7 +17,17 @@
   <tr>
     <td colspan="2">
       <a href="https://www.youtube.com/watch?v=TA97TGoOMJA" target="_blank">
-        <img src="https://img.youtube.com/vi/TA97TGoOMJA/maxresdefault.jpg" alt="MCP IDE Bridge Demo" style="border: 3px solid #4CAF50; border-radius: 10px; padding: 4px; box-shadow: 0 0 8px #888;">
+        <img 
+          src="https://img.youtube.com/vi/TA97TGoOMJA/maxresdefault.jpg" 
+          alt="MCP IDE Bridge Demo"
+          style="
+            border: 5px solid #2196F3; 
+            border-radius: 14px; 
+            padding: 0; 
+            box-shadow: 0 0 24px 4px #2196F3, 0 0 0 4px #fff inset;
+            transition: box-shadow 0.3s;
+          "
+        >
       </a>
     </td>
   </tr>

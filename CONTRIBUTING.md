@@ -25,7 +25,7 @@ Thank you for your interest in contributing to MCP IDE Bridge!
 
 3. **Install dependencies**
    ```bash
-   pip install -e .
+   pip install -r requirements.txt
    ```
 
 ## 🧪 Testing

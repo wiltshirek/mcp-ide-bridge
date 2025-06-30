@@ -109,7 +109,13 @@ class InMemoryQueueBackend(QueueBackend):
                 logger.debug(f"Removed empty queue for {recipient_id}")
     
     async def wait_for_new_message(self, client_id: str, timeout: float) -> bool:
-        """Block until new message arrives using asyncio.Event."""
+        """Block until new message arrives, but check existing messages first."""
+        
+        # 🔥 KEY FIX: Check if messages already exist
+        if client_id in self.queues and self.queues[client_id]:
+            logger.debug(f"Messages already available for {client_id}")
+            return True  # Messages exist, no need to wait
+        
         # Create event if it doesn't exist
         if client_id not in self.notification_events:
             self.notification_events[client_id] = asyncio.Event()

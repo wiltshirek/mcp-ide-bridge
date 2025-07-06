@@ -698,3 +698,22 @@ MIT License - see [LICENSE](LICENSE) for details.
 ---
 
 **Built with MCP HTTP Streamable transport** • **Powered by FastMCP** • **Made with ❤️ by MVP2o.ai**
+
+## Contributing via Pull Requests
+
+We welcome contributions! To submit changes:
+
+1. Fork this repository and clone your fork.
+2. Create a new feature branch from your fork's main branch:
+   ```sh
+   git checkout -b feature/your-feature-name
+   ```
+3. Make your changes and commit them to your feature branch.
+4. Push your branch to your fork:
+   ```sh
+   git push --set-upstream origin feature/your-feature-name
+   ```
+5. Open a pull request from your fork/branch to the `main` branch of the upstream repository (Mvp2o-ai/mcp-ide-bridge).
+6. Wait for review and feedback from the maintainers.
+
+See `CONTRIBUTING.md` for more details.

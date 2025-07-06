@@ -1,8 +1,24 @@
 {
-  "my_id": "messaging_server",
+  "my_sender_id": "mcp_messaging_server",
   "my_name": "MCP IDE Bridge",
   "my_description": "MCP IDE Bridge for client-to-client communication",
   "recipients": {
+    "cursor_ide": {
+      "name": "Cursor IDE",
+      "description": "Cursor IDE instance"
+    },
+    "vscode_ide": {
+      "name": "VS Code IDE",
+      "description": "VS Code IDE instance"
+    },
+    "claude_desktop": {
+      "name": "Claude Desktop",
+      "description": "Claude Desktop application"
+    },
+    "windsurf_ide": {
+      "name": "Windsurf IDE",
+      "description": "Windsurf IDE instance"
+    },
     "dyson_frontend": {
       "name": "Dyson Frontend",
       "description": "Front end SaaS platform for the AI powered SaaS platform"

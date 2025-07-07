@@ -53,7 +53,7 @@ class QueueBackend(ABC):
 class InMemoryQueueBackend(QueueBackend):
     """In-memory queue backend using asyncio.Event for wake-up notifications."""
     
-    def __init__(self, message_expiration_seconds: float = 300.0):
+    def __init__(self, message_expiration_seconds: float = float('inf')):  # Set to infinity by default
         self.queues: Dict[str, List[Message]] = {}
         self.notification_events: Dict[str, asyncio.Event] = {}
         self.message_expiration_seconds = message_expiration_seconds
@@ -90,6 +90,10 @@ class InMemoryQueueBackend(QueueBackend):
     
     async def cleanup_expired_messages(self) -> None:
         """Remove expired messages from all queues."""
+        # Skip cleanup if expiration is disabled (infinity)
+        if self.message_expiration_seconds == float('inf'):
+            return
+            
         cutoff_time = datetime.now() - timedelta(seconds=self.message_expiration_seconds)
         
         for recipient_id in list(self.queues.keys()):

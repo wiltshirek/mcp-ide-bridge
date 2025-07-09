@@ -590,6 +590,13 @@ def main() -> None:
         help="Host to bind to"
     )
     parser.add_argument(
+        "--transport",
+        type=str,
+        default="streamable-http",
+        choices=["streamable-http"],  # Currently only supports streamable-http
+        help="Transport protocol to use"
+    )
+    parser.add_argument(
         "--queue-backend",
         type=str,
         default=os.getenv("QUEUE_BACKEND", "memory"),
@@ -599,18 +606,18 @@ def main() -> None:
     args = parser.parse_args()
     
     logger.info(f"Starting MCP messaging server on {args.host}:{args.port}")
+    logger.info(f"Transport: {args.transport}")
     logger.info(f"Queue backend: {type(messaging_server.queue_backend).__name__}")
     logger.info("Tools available: checkin_client, send_message_without_waiting, get_messages, get_my_identity")
     
-    # Start the server with HTTP Streamable transport
     # Configure host and port via FastMCP settings
     mcp.settings.host = args.host
     mcp.settings.port = args.port
     
     print(f"🚀 Starting MCP messaging server at http://{args.host}:{args.port}")
-    logger.info("MCP messaging server starting", extra={"host": args.host, "port": args.port})
+    logger.info("MCP messaging server starting", extra={"host": args.host, "port": args.port, "transport": args.transport})
     
-    mcp.run(transport="streamable-http")
+    mcp.run(transport=args.transport)
 
 
 if __name__ == "__main__":
